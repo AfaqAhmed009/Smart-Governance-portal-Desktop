@@ -81,8 +81,8 @@ CREATE TABLE IF NOT EXISTS citizens (
 
 CREATE TABLE IF NOT EXISTS issues (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    tracking_code VARCHAR(20) NOT NULL UNIQUE,
-    title VARCHAR(255) NOT NULL,
+    tracking_code VARCHAR(20) NOT NULL UNIQUE, -- Should have a specific pattern so that for smart predicton can be used to compare.
+    title VARCHAR(255) NOT NULL,  
     description TEXT,
     status VARCHAR NOT NULL DEFAULT 'pending',
     severity VARCHAR NOT NULL DEFAULT 'low',
@@ -147,6 +147,35 @@ CREATE TABLE IF NOT EXISTS feedbacks (
     FOREIGN KEY (issue_id) REFERENCES issues(id),
     FOREIGN KEY (citizen_id) REFERENCES citizens(user_id)
 );
+
+-- Smart prediction 
+--Smart calculation will be performed like by counting the issuesw with the tacking ID 
+--Tracking ID sample sewerage issue  : SW-001
+--Tracking ID sample Electricity issue  : EL-001 and these will be cunted ti get the prediction.
+
+CREATE TABLE smart_predictions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+
+    issue_id INT NOT NULL,
+    tracking_code VARCHAR(20) NOT NULL,
+
+    total_similar_issues INT,
+
+    predicted_priority ENUM('P1','P2','P3','P4'),
+
+    confidence_score FLOAT,
+
+    predicted_response_time DATETIME,
+    predicted_resolution_time DATETIME,
+
+    sla_priority ENUM('P1','P2','P3','P4'),
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (issue_id) REFERENCES issues(id)
+);
+
+
 
 CREATE TABLE IF NOT EXISTS announcements (
     id INT PRIMARY KEY AUTO_INCREMENT,
